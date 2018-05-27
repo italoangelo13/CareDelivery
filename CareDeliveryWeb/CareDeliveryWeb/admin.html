@@ -1,0 +1,197 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <!-- Arquivos CSS -->
+    <link rel="stylesheet" type="text/css" href="Assets/Bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="Assets/fontello/css/fontello.css" />
+    <link href="Assets/jquery.toast.min.css" rel="stylesheet" />
+    <link href="Assets/fontello/css/animation.css" rel="stylesheet" />
+    <link href="Assets/Loader.css" rel="stylesheet" />
+
+    <!-- Arquivos JS -->
+    <script type="text/javascript" src="Assets/Bootstrap/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="Assets/jquery.toast.min.js"></script>
+    <script type="text/javascript" src="Assets/Bootstrap/js/popper.min.js"></script>
+    <script type="text/javascript" src="Assets/Bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="Assets/Mascaras.js"></script>
+    <script type="text/javascript" src="Assets/Toast.js?version=1.1"></script>
+    <script src="Assets/Loader.js?version=1.1"></script>
+    <meta charset="utf-8" />
+    <title>Acesso ao Sistema - Care Delivery</title>
+
+
+    <style>
+        html, body {
+            height: 100%;
+            min-height: 100%;
+        }
+
+        body {
+            font: 15px arial;
+            color: rgba(0, 0, 0, .7);
+        }
+
+        .wrapper {
+            height: 100%;
+            min-height: 100%;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-align-items: center;
+            align-items: center;
+            -webkit-justify-content: center;
+            justify-content: center;
+            background:url('imgs/fundo.jpg') top;
+            background-size:1500px;
+        }
+
+        .box {
+            max-width: 380px;
+            width: 320px;
+            padding: 5px;
+            background-color: white;
+            border: 2px solid rgba(255, 255, 255, .1);
+            border-radius: 10px;
+            box-shadow: 5px 5px 10px rgba(0,0,0,0.9);
+        }
+    </style>
+
+
+    <script type="text/javascript">
+        function Autenticar() {
+            var usuario = $('#_eduser').val();
+            var senha = $('#_edsenha').val();
+
+            if (usuario == "" || usuario == null) {
+                alerta('Informe seu nome de Usuario.', 'warning', 'Campo em Branco');
+                $('#_eduser').focus();
+                return;
+            }
+
+            if (senha == "" || senha == null) {
+                alerta('Informe sua senha.', 'warning', 'Campo em Branco');
+                $('#_edsenha').focus();
+                return;
+            }
+
+            showLoading('Autenticando Usuario...');
+            
+            
+            var obj = { 'usuario': usuario, 'senha':senha };
+            $.ajax({
+                url: 'api.asmx/autenticarUsuario',
+                data: JSON.stringify(obj),
+                dataType: "json",
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    var dados = JSON.parse(data.d);
+                    console.log(dados);
+                    var auth = dados.Autenticado;
+                    if (auth == false) {
+                        hideLoading();
+                        
+                        alerta('Usuario ou Senha invalidos.', 'erro', 'Falha na Autenticação');
+                        return;
+                    }
+
+                    var codUser = dados.CodUsuario;
+                    var categoria = dados.Categoria;
+
+
+                    if (categoria == 1) { //Usuario
+                        hideLoading();
+                        sessionStorage.setItem('codUsuario', codUser);
+                        window.location.href = "Dashboard_Usuario.html";
+                    }
+                    else {//Estabelecimento
+                        hideLoading();
+                        sessionStorage.setItem('codUsuario', codUser);
+                        window.location.href = "Dashboard_Usuario.html";
+                    }
+                    
+                }
+            });
+        }
+    </script>
+
+
+</head>
+<body>
+    <div id="loader">
+        <div id="box-loader" class="box">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12 text-center">
+                        <h3><i class="icone-spin1 animate-spin"></i></h3>  <label id="text-load">Autenticando Usuário...</label>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        
+    </div>
+    <div class="wrapper">
+        <div class="box">
+            <div class="container">
+
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h5 class="alert alert-primary text-center">
+                            Acesso ao Sistema
+                        </h5>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-bottom:15px;">
+                    <div class="col-lg-12 text-center">
+                        <img src="imgs/logo.png" width="100%" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <label><i class="icone-user"></i> Usuario</label>
+                        <p>
+                            <input type="text" name="usuario" id="_eduser" class="form-control" />
+                        </p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <label><i class="icone-lock"></i> Senha</label>
+                        <p>
+                            <input type="password" name="senha" id="_edsenha" class="form-control" />
+                        </p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <button class="btn btn-primary btn-block" type="submit" onclick="Autenticar()">
+                            Acessar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12 text-center">
+                        <label class="text-muted">Ainda não é cadastrado?</label>
+                        <br />
+                        <a href="#">Cadastre-se Aqui</a>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12 text-center">
+                        <a href="#">Esqueci minha Senha!</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

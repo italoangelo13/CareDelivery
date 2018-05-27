@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <!-- Arquivos CSS -->
+    <link rel="stylesheet" type="text/css" href="Assets/Bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="Assets/fontello/css/fontello.css" />
+    <link href="Assets/jquery.toast.min.css" rel="stylesheet" />
+    <link href="Assets/fontello/css/animation.css" rel="stylesheet" />
+    <link href="Assets/Loader.css" rel="stylesheet" />
+
+    <!-- Arquivos JS -->
+    <script type="text/javascript" src="Assets/Bootstrap/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="Assets/jquery.toast.min.js"></script>
+    <script type="text/javascript" src="Assets/Bootstrap/js/popper.min.js"></script>
+    <script type="text/javascript" src="Assets/Bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="Assets/Mascaras.js"></script>
+    <script type="text/javascript" src="Assets/Toast.js?version=1.1"></script>
+    <script src="Assets/Loader.js?version=1.1"></script>
+    <script src="Assets/CareDelivery.js?version=1.1"></script>
+    <title>Care Delivery</title>
+
+
+    <style>
+        #fotoPerfil{
+            border-radius:500px;
+            border:5px solid #ffffff;
+        }
+    </style>
+
+
+
+    <script type="text/javascript">
+        window.onload = function () {
+
+            var codUsuario = sessionStorage.getItem('codUsuario');
+
+            if (codUsuario == null || codUsuario == "") {
+                //alerta('Você deve fazer o login antes de utilizar a plataforma.', 'erro', 'Acesso Negado!');
+                window.location.href = "admin.html";
+            }
+            else {
+                carregaUsuario(codUsuario);
+            }
+
+        }
+
+        function carregaUsuario(codUsuario) {
+            var obj = { 'codUsuario': codUsuario };
+            $.ajax({
+                url: 'api.asmx/carregaUsuario',
+                data: JSON.stringify(obj),
+                dataType: "json",
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    var dados = JSON.parse(data.d);
+                    console.log(dados);
+                    console.log(dados.Usuario);
+                    //document.getElementById('nomeUsuarioBar').innerHTML = dados.Usuario;
+                    //document.getElementById('nomeCompleto').innerHTML = dados.Nome;
+                    $('#nomeUsuarioBar').append(dados.Usuario);
+                    $('#nomeCompleto').append(dados.Nome);
+                    $('#email').append(dados.Email);
+                    $('#cpf').append(dados.Cpf);
+                }
+            });
+        }
+
+    </script>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <aside class="col-lg-3" style="background:#01579B;">
+                <div class="container-fluid" style="padding:0px;">
+                    <div class="row alert-info" style="padding:2px;">
+                        <div class="col-lg-3">
+                            <a href="" id="SairDash" class="text-muted"><i class="icone-logout"></i> Sair</a>
+                        </div>
+
+                        <div class="col-lg-9 text-right">
+                           <i>Olá, <label id="nomeUsuarioBar" style="font-weight:700"></label></i>
+                        </div>
+                    </div>
+
+                    <div class="row" style="padding-top:15px; background-color:#0277BD">
+                        <div class="col-lg-12 text-center">
+                            <img id="fotoPerfil" src="imgs/Logo.png" width="200px" height="200px" />
+                        </div>
+                    </div>
+
+                    <div class="row" style="padding-top:15px; background-color:#0277BD">
+                        <div class="col-lg-12 text-center text-white">
+                            <label class="badge badge-success">Usuario</label>
+                        </div>
+                        <div class="col-lg-12 text-center text-white">
+                           <h5><label id="nomeCompleto"></label></h5>
+                        </div>
+                        <div class="col-lg-12 text-center text-white">
+                            <h6><label id="email"></label></h6>
+                        </div>
+                        <div class="col-lg-12 text-center text-white">
+                            <h6><label id="cpf"></label></h6>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+
+            <section class="col-lg-9">
+
+            </section>
+        </div>
+    </div>
+</body>
+</html>
